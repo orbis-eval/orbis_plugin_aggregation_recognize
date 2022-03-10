@@ -44,21 +44,31 @@ class Main(AggregationBaseClass):
         return response
 
     def map_entities(self, response, item):
+        ignore_types = list(filter(None,
+                                   getenv('RECOGNIZE_IGNORE', '').split(',')))
         entities = []
-
-        if not response:
-            return None
 
         if response and 'annotations' in response:
             for annotation in response['annotations']:
-                item['key'] = annotation['key']
-                item['entity_type'] = annotation['entity_type'].split(
-                    '#')[1].split('/')[0]
-                item['document_start'] = annotation['start']
-                item['document_end'] = annotation['end']
-                item['surfaceForm'] = annotation['surfaceForm']
-                entities.append(item)
-        return entities
+                entity_type = annotation['key'].split('#')[1].split('/')[0]
+                if entity_type in ignore_types:
+                    continue
+                    
+                entities.append({
+                    'key': annotation['key'],
+                    'document_start': annotation['start'],
+                    'document_end': annotation['end'],
+                    'entity_type':entity_type,
+                    'type_url': annotation['entity_type'],
+                    'surfaceForm': annotation['surfaceForm'],
+                })
+
+        # return a nil entity if nothing has been found
+        return entities if entities else [{'key': 'https://nil.org',
+                                           'document_start': 0,
+                                           'document_end': 3,
+                                           'entity_type': 'nil',
+                                           'surfaceForm': 'nil'}]
 
 
 if __name__ == '__main__':

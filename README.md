@@ -8,3 +8,4 @@ You can use the following environment variables to configure the module:
 - `RECOGNIZE_USER`: optional user name to use for Basic Authentification
 - `RECOGNIZE_PASS`: optional password to use for Basic Authentification
 - `RECOGNIZE_PROFILE`: name of the recognize profile to use for the evaluation.
+- `RECOGNIZE_IGNORE`: entity types to ignore during the evaluation (e.g., `predicate,sco`)
