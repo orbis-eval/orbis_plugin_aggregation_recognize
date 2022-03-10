@@ -53,7 +53,7 @@ class Main(AggregationBaseClass):
                 entity_type = annotation['key'].split('#')[1].split('/')[0]
                 if entity_type in ignore_types:
                     continue
-                    
+
                 entities.append({
                     'key': annotation['key'],
                     'document_start': annotation['start'],
