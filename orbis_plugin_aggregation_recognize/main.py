@@ -31,13 +31,12 @@ class Main(AggregationBaseClass):
         auth = (user, pwd) if user and pwd else None
         r = requests.post(f'{url}/search_document?profileName={profile}',
                       auth=auth, json=recognize_document)
-        print(r)
         return loads(r.text)
 
     def query(self, item):
-        text = item['corpus']
+        doc = Main.create_recognize_document(item['corpus'])
         try:
-            response = Main.recognize(text)
+            response = Main.recognize(doc)
             print(response)
         except Exception as exception:
             logger.error(f"Query failed: {exception}")
@@ -53,9 +52,11 @@ class Main(AggregationBaseClass):
         if response and 'annotations' in response:
             for annotation in response['annotations']:
                 item['key'] = annotation['key']
-                item['entity_type'] = annotation['entity_type']
+                item['entity_type'] = annotation['entity_type'].split(
+                    '#')[1].split('/')[0]
                 item['document_start'] = annotation['start']
                 item['document_end'] = annotation['end']
+                item['surfaceForm'] = annotation['surfaceForm']
                 entities.append(item)
         return entities
 
